@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 /**
  * Created by Basil on 07/09/2015.
  */
@@ -8,7 +10,8 @@ public class CryptoMain {
     private void launch() {
 
         //set1Challenge1();
-        set1Challenge2();
+        //set1Challenge2();
+        set1Challenge3();
 
     }
 
@@ -47,4 +50,65 @@ public class CryptoMain {
 
     }
 
+    private void set1Challenge3 () {
+
+        /**
+         * Challenge 3
+         * Single-byte XOR cipher
+         * Key: 0x58
+         * Plaintext: Cooking MC's like a pound of bacon
+         *
+         * Three methods of attack:
+         *      1. Brute force, try all possible single-keys
+         *      2. Guess individual keys
+         *      3. Use character frequency analysis to narrow choices of keys
+         */
+
+        String cipherText = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+        int counter = 0;
+
+        /* 1. B R U T E   F O R C E */
+
+        System.out.println("Cracking ciphertext with Brute Force.\n");
+
+        for (String k : CryptoUtils.hexAlphabet()) {
+
+            counter++;
+            System.out.println("Key: " + k + " gives: \t" + CryptoUtils.decipherHexStringWithKey(cipherText, k) + " END");
+
+        }
+
+        System.out.println("\nBrute force requires " + counter + " guesses.\n");
+
+        /* 2. G U E S S   K E Y */
+
+        System.out.println("Cracking ciphertext with key 0x58.");
+
+        String key = "58";
+
+        System.out.println(CryptoUtils.decipherHexStringWithKey(cipherText, key));
+        System.out.println();
+
+        /* 3. C H A R A C T E R   A N A L Y S I S */
+
+        System.out.println("Breaking ciphertext with character frequency analysis.\n");
+
+        counter = 0;
+
+        HashMap<String,Integer> keys = CryptoUtils.getScoredKeys(CryptoUtils.characterFrequencyMap(cipherText));
+
+        for (String k : keys.keySet()) {
+
+            String plain = CryptoUtils.decipherHexStringWithKey(cipherText, k);
+
+            if (CryptoUtils.containsKeyword(plain)) {
+                counter++;
+                System.out.println("Key: " + k + " gives: \t" + plain + " END");
+            }
+
+        }
+
+        System.out.println("\nCharacter frequency requires " + counter + " guesses.\n");
+
+    }
 }
